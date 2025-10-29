@@ -30,6 +30,8 @@ default house_noticed_car_keys_missing = False
 default detective_station_checked_id = False
 default detective_station_analyzed_blood = False
 
+default waltz_started = False
+
 transform left:
     xalign 0.0
     xanchor 0.0
@@ -44,13 +46,15 @@ label start:
     jump start_alley_scene
 
 label end:
-    stop music
+    if not waltz_started:
+        stop music
     d "Wait... why does it actually line up?"
     pause 2.5
     d "N-No... I've been investigating my own crime this whole time? And I don't even remember because of what they did to me?!"
     show security at right
-    s "Put your hands behind your back. Don't resist."
-    play music leitwaltz
+    if not waltz_started:
+        play music leitwaltz
+    s "Don't resist."
     d "This can't be happenning, no, No... I WouLD NEVER KiLl SAm JuniOr!! NOOooOOooo"
     pause 0.5
     hide security
@@ -108,7 +112,7 @@ label hub_scene:
     if not been_to_hub:
         "The detective finds themselves in a familiar city."
 
-        play music surrealexploration
+        play music tevottwisbos
 
         show detective at left
         d "The streets feel empty, today."
@@ -317,24 +321,29 @@ label home_scene:
                 show detective at left
                 if not house_noticed_chicken:
                     d "I guess they threw around the food in my fridge somewhere too, because it smells... interesting in here."
-                    hide detective
                     scene brickwall # Chicken dream
+                    hide detective
+                    
                     "There was once a Countryman who possessed the most wonderful Goose you can imagine, for every day when he visited the nest, the Goose had laid a beautiful, glittering, golden egg."
-                    show detective at left
                     scene brickwall # Home
+                    show detective at left
+                    
                     d "Huh... usually my chicken would be screaming as soon as it sensed me coming up the stairs."
-                    hide detective
                     scene brickwall # Chicken dream
+                    hide detective
+                    
                     "The Countryman took the eggs to market and soon began to get rich. But it was not long before he grew impatient with the Goose because she gave him only a single golden egg a day. He was not getting rich fast enough."
-                    show detective at left
                     scene brickwall # Home
+                    show detective at left
                     d "Sam junior? Sam junior?!?"
-                    hide detective
                     scene brickwall # Chicken dream
+                    hide detective
+                    
                     "Then one day, after he had finished counting his money, the idea came to him that he could get all the golden eggs at once by killing the Goose and cutting it open."
                     show detective at left
                     d "There's... there's blood here too, under the door? Sam Junior are you OK?!"
                     scene brickwall # Chicken door
+                    show detective at left
                     pause 1.0
                     "But now, the chicken lays there, with not a single golden egg to be found."
                     pause 1.0
@@ -391,8 +400,11 @@ label home_scene:
                                 "As the clip continues, something mysterious happens."
                                 d "Huh?! Is that ME in walking into the alleyway?"
                                 "The Detective watches themselves stumble into the alleway, then watches four people dressed in all black assemble behind them."
+                                stop music
                                 d "What... what's happening..?"
                                 "The camera gets covered up by a piece of paper for the rest of the clip, but it's clear from the sound that the Detective is getting beat up."
+                                play music leitwaltz
+                                $ waltz_started = True
                                 d "What... the guard must not have noticed with their sound off, but... Did I just watch myself getting attacked in the alleyway, JUST YESTERDAY, that I have absolutely NO MEMORY of?"
                                 d "I don't understand..."
                                 jump .check_options
@@ -483,9 +495,11 @@ label detective_station_scene:
                 show security at right
                 if detective_station_checked_id:
                     d "I've already asked the guard to check my I.D., maybe they can help me further?"
+                    if DETECTIVE_HANDBOOK not in items:
+                        d "I do still need my handbook, after all."
                     label .check_options:
                         menu:
-                            "What should I do?"
+                            "What should I talk about?"
 
                             "Detective handbook" if DETECTIVE_HANDBOOK not in items:
                                 d "Do you know where my handbook could be? I seem to have misplaced it."
@@ -545,10 +559,11 @@ label detective_station_scene:
             "Go to the analysis lab" if detective_station_checked_id and (not detective_station_analyzed_blood):
                 show detective at left
                 if BLOOD_GLASS in items:
+                    stop music
                     "The detective places the glass into the machine, and it buzzes to life. After a few seconds, it prints out the results."
                     d "So the person this blood belonged to is..."
                     pause 1.5
-                    play music tevottwisbos
+                    play music surrealexploration
                     d "is... me?"
                     $ detective_station_analyzed_blood = True
                     show security at right
