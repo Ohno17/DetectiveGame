@@ -12,6 +12,7 @@ define HOUSE_KEY = "the house keys"
 define GLASS = "an empty drinking glass"
 define BLOOD_GLASS = "a drinking glass with some dried blood"
 define DETECTIVE_ID = "my detective ID"
+define DETECTIVE_HANDBOOK = "my handbook"
 define CAMERA_FOOTAGE = "the box of CDs with camera footage"
 
 # Story progression
@@ -68,6 +69,11 @@ label check_inventory:
 
     return
 
+label submit_case(name):
+    scene brickwall with fade
+    pause 2.0
+    return name == DETECTIVE_NAME
+
 label hub_scene:
 
     scene brickwall with fade
@@ -87,6 +93,24 @@ label hub_scene:
     label .options:
         menu:
             "What should I do?"
+
+            "Submit a case" if DETECTIVE_HANDBOOK in items:
+                show detective at left
+                d "Just need to write something in my book, submit it, and they'll review my evidence. I need a full name, though, which might make it harder."
+                python:
+                    submitted = renpy.input("Enter the full name, first and last name capitalized with a space in-between.")
+                    sumbitted = submitted.strip()
+                if not submitted:
+                    d "I guess I'm not confident in my choice right now."
+                else:
+                    call submit_case(submitted)
+                    if _return:
+                        jump game_end
+                    else:
+                        "Your choice was wrong."
+                        d "I guess my choice was a little inaccurate."
+                hide detective
+                jump .options
 
             "Look around":
                 show detective at left
@@ -355,7 +379,11 @@ label detective_station_scene:
 
                             "Detective handbook" if DETECTIVE_HANDBOOK not in items:
                                 d "Do you know where my handbook could be? I seem to have misplaced it."
-                                s "Yes, it's with me, after "
+                                s "Yes, it's with me, after you were... recorded to not show up for work for almost 2 months."
+                                "The guard hands over the book, and the Detective imagined a gleam of suspicion in the guard's eye."
+                                pause 1.0
+                                d "Yeah... unfortunate circumstances happened, and... it's a personal matter, ok?"
+                                s "I'm just the messenger; no judging from here."
                                 $ items.append(DETECTIVE_HANDBOOK)
                                 jump .check_options
 
@@ -365,11 +393,16 @@ label detective_station_scene:
                                 "The guard hands over a box of CDs with camera footage."
                                 $ items.append(CAMERA_FOOTAGE)
                                 jump .check_options
+                            
+                            "A CD player":
+                                if CAMERA_FOOTAGE in items:
+                                d ""
+                                s "There's no CD players at this station, if that's what you're asking."
 
                             "Stop talking":
                                 jump .stop_talk
                     label .stop_talk:
-                        d "Well... it was good talking with you."
+                        d "Well, it was good talking with you."
                         s "It's just buisiness as usual."
                 else:
                     if DETECTIVE_ID in items:
