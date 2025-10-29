@@ -44,10 +44,11 @@ label start:
     jump start_alley_scene
 
 label end:
+    stop music
     d "Wait... why does it actually line up?"
     pause 2.5
     d "N-No... I've been investigating my own crime this whole time? And I don't even remember because of what they did to me?!"
-    show security
+    show security at right
     s "Put your hands behind your back. Don't resist."
     play music leitwaltz
     d "This can't be happenning, no, No... I WouLD NEVER KiLl SAm JuniOr!! NOOooOOooo"
@@ -55,11 +56,20 @@ label end:
     hide security
     hide detective
 
+    scene brickwall with fade # Prison scene
+    show detective at left
+    d "I know what I did now..."
+    pause 0.5
+    d "But it's just such a weird feeling, knowing about something you did but not remembering its experience."
+    d "Like you're some kind of third party spectating from the shadows."
+    pause 1.0
+    hide detective
+
     scene brickwall with fade # Black scene
-    "The Detective was put in prison for the crimes they unknowingly committed."
-    "The amnesia they got from that fateful day"
-    "Thus, this story reaches its bittersweet end with that corner of the city returning to normal, and everybody else being blissfully unaware."
     "The guard went on to lead an uninspiring and monotone life at the station."
+    "The Detective was put in prison for the crimes they unknowingly committed."
+    "The amnesia they got from that fateful day only added confusion on top of what happened."
+    "Thus, this story reaches its bittersweet end with that corner of the city returning to normal, and everybody else being blissfully unaware."
     "The End"
     return
 
@@ -77,11 +87,13 @@ label start_alley_scene:
 label check_inventory:
 
     python:
-        if len(items) > 0:
+        if len(items) == 0:
+            string_items = "absolutely nothing"
+        elif len(items) == 1:
+            string_items = items[0]
+        else:
             string_items = ", ".join(items[:-1])
             string_items += ", and " + items[-1]
-        else:
-            string_items = "absolutely nothing"
 
     show detective at left
     d "Let's see here... I have: [string_items]."
@@ -298,19 +310,31 @@ label home_scene:
                     show detective at left
                     d "I need to check my pet chicken before I leave. It's important."
                     hide detective
+                    jump .options
             
             "Check for pet chicken":
                 "The opressive smell of iron fills the Detective's senses."
                 show detective at left
                 if not house_noticed_chicken:
-                    d "I guess they threw the food in my fridge somewher e, too, because it smells... interesting in here."
+                    d "I guess they threw around the food in my fridge somewhere too, because it smells... interesting in here."
+                    hide detective
+                    scene brickwall # Chicken dream
                     "There was once a Countryman who possessed the most wonderful Goose you can imagine, for every day when he visited the nest, the Goose had laid a beautiful, glittering, golden egg."
+                    show detective at left
+                    scene brickwall # Home
                     d "Huh... usually my chicken would be screaming as soon as it sensed me coming up the stairs."
+                    hide detective
+                    scene brickwall # Chicken dream
                     "The Countryman took the eggs to market and soon began to get rich. But it was not long before he grew impatient with the Goose because she gave him only a single golden egg a day. He was not getting rich fast enough."
+                    show detective at left
+                    scene brickwall # Home
                     d "Sam junior? Sam junior?!?"
+                    hide detective
+                    scene brickwall # Chicken dream
                     "Then one day, after he had finished counting his money, the idea came to him that he could get all the golden eggs at once by killing the Goose and cutting it open."
+                    show detective at left
                     d "There's... there's blood here too, under the door? Sam Junior are you OK?!"
-                    scene brickwall with fade # Chicken door
+                    scene brickwall # Chicken door
                     pause 1.0
                     "But now, the chicken lays there, with not a single golden egg to be found."
                     pause 1.0
@@ -322,6 +346,7 @@ label home_scene:
                     d "Here's a picture of me and Sam junior. I named the chicken after myself, because I always saw it as my beautiful, bountiful child."
                     "The detective holds up a picture of themselves jumping off a ledge, holding Sam Jr. like a glider."
                 hide detective
+                jump .options
             
             "Check for the detective ID" if DETECTIVE_ID not in items:
                 show detective at left
@@ -357,7 +382,8 @@ label home_scene:
                                 "A clip of the main street through this part of the city appears on the screen."
                                 "It seems the street is empty on this day, and the track continues with scarcely anybody passing the view of the camera."
                                 d "Hmm... it's a little creepy seeing this empty street and expecting something to happen, but I guess some footage will turn out to be boring."
-                            
+                                jump .check_options
+
                             "Clip 2 (Alleyway)":
                                 "A clip of the dark alleyway appears on the screen."
                                 if BLOOD_GLASS in items:
@@ -369,19 +395,23 @@ label home_scene:
                                 "The camera gets covered up by a piece of paper for the rest of the clip, but it's clear from the sound that the Detective is getting beat up."
                                 d "What... the guard must not have noticed with their sound off, but... Did I just watch myself getting attacked in the alleyway, JUST YESTERDAY, that I have absolutely NO MEMORY of?"
                                 d "I don't understand..."
+                                jump .check_options
 
                             "Clip 3 (Detective Station)":
                                 "A clip of the inside of the detective station appears on the screen."
                                 "Even played at two times the regular speed, it's amazing seeing how long the guard can stand so incredibly still."
                                 d "That's funny, the people passing look like ants scurrying along at this speed. On a serious note, the traffic in the station today seems like it dropped off significantly compared to yesterday."
+                                jump .check_options
 
                             "Stop watching":
                                 jump .stop_check
+                            
                     label .stop_check:
                         d "Those were some creepy videos..."
                 else:
                     d "Suprisingly, the CD player and television set are completely unharmed, despite being an obvious choice to smash to pieces. It's not like I have a movie collection or anything though, so this part of my home is pretty useless."
                 hide detective
+                jump .options
             
             "Check for the silverware":
                 "Broken ceramic and glass is strewn all across the floor."
@@ -489,7 +519,9 @@ label detective_station_scene:
                             "Guard's Name":
                                 s "It's right here on my badge, see? I'm [SECURITY_NAME]"
                                 d "I see, Thanks."
-                                s "You aren't trying to get all buddy-buddy with me, are you? Because it isn't happening 'Mr [DETECTIVE_NAME.split(" ")[1]]'"
+                                $ detective_last_name = DETECTIVE_NAME.split(" ")[1]
+                                s "You aren't trying to get all buddy-buddy with me, are you? Because it isn't happening 'Mr [detective_last_name]'"
+                                jump .check_options
 
                             "Stop talking":
                                 jump .stop_talk
@@ -500,7 +532,8 @@ label detective_station_scene:
                     if DETECTIVE_ID in items:
                         d "Here's my card."
                         "The Detective extends their hand, containing the simple I.D. card. On the card is a barcode along the long side, and a picture."
-                        s "Thanks, and you're allowed in now, 'Mr [DETECTIVE_NAME.split(" ")[1]]'"
+                        $ detective_last_name = DETECTIVE_NAME.split(" ")[1]
+                        s "Thanks, and you're allowed in now, 'Mr [detective_last_name]'"
                         $ detective_station_checked_id = True
                     else:
                         d "I still don't have my I.D. card. Is there really no other way?"
@@ -519,7 +552,7 @@ label detective_station_scene:
                     d "is... me?"
                     $ detective_station_analyzed_blood = True
                     show security at right
-                    s "That's some weird sample you've brought... Did you really need to analyze your own blood."
+                    s "That's some weird sample you've brought... Did you really need to analyze your own blood?"
                     pause 1.0
                     menu:
                         "What do I say?"
