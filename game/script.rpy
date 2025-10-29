@@ -60,7 +60,7 @@ label end:
     hide security
     hide detective
 
-    scene brickwall with fade # Prison scene
+    scene prison with fade # Prison scene
     show detective at left
     d "I know what I did now..."
     pause 0.5
@@ -69,7 +69,7 @@ label end:
     pause 1.0
     hide detective
 
-    scene brickwall with fade # Black scene
+    scene black with fade # Black scene
     "The guard went on to lead an uninspiring and monotone life at the station."
     "The Detective was put in prison for the crimes they unknowingly committed."
     "The amnesia they got from that fateful day only added confusion on top of what happened."
@@ -107,7 +107,7 @@ label check_inventory:
 
 label hub_scene:
 
-    scene brickwall with fade # Hub of city
+    scene cityhub with fade # Hub of city
 
     if not been_to_hub:
         "The detective finds themselves in a familiar city."
@@ -181,7 +181,7 @@ label hub_scene:
 
 label alleyway_scene:
 
-    scene brickwall with fade # Alleyway
+    scene alley with fade # Alleyway
 
     if not been_to_alleyway:
         "The alleyway is dimly lit and narrow."
@@ -240,7 +240,7 @@ label home_entrance_scene:
     if house_entrance_manual_unlock:
         jump home_scene
 
-    scene brickwall with fade # Home entrance
+    scene homeentry with fade # Home entrance
 
     if not been_to_house_entrance:
         
@@ -290,7 +290,7 @@ label home_entrance_scene:
 
 label home_scene:
 
-    scene brickwall with fade # Home
+    scene home with fade # Home
 
     if not been_to_house:
 
@@ -325,7 +325,7 @@ label home_scene:
                     hide detective
                     
                     "There was once a Countryman who possessed the most wonderful Goose you can imagine, for every day when he visited the nest, the Goose had laid a beautiful, glittering, golden egg."
-                    scene brickwall # Home
+                    scene home # Home
                     show detective at left
                     
                     d "Huh... usually my chicken would be screaming as soon as it sensed me coming up the stairs."
@@ -333,7 +333,7 @@ label home_scene:
                     hide detective
                     
                     "The Countryman took the eggs to market and soon began to get rich. But it was not long before he grew impatient with the Goose because she gave him only a single golden egg a day. He was not getting rich fast enough."
-                    scene brickwall # Home
+                    scene home # Home
                     show detective at left
                     d "Sam junior? Sam junior?!?"
                     scene brickwall # Chicken dream
@@ -349,7 +349,7 @@ label home_scene:
                     pause 1.0
                     d "No. NO NO No no, no... SAM JUNIOR, HOW COULD THEY DO THIS TO YOU?!?!?"
                     $ house_noticed_chicken = True
-                    scene brickwall with fade # Home
+                    scene home with fade # Home
                 else:
                     "The Detective sniffles once upon entering the room."
                     d "Here's a picture of me and Sam junior. I named the chicken after myself, because I always saw it as my beautiful, bountiful child."
