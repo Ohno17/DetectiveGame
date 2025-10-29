@@ -12,16 +12,18 @@ define HOUSE_KEY = "the house keys"
 define GLASS = "an empty drinking glass"
 define BLOOD_GLASS = "a drinking glass with some dried blood"
 define DETECTIVE_ID = "my detective ID"
-
-default items = []
+define CAMERA_FOOTAGE = "the box of CDs with camera footage"
 
 # Story progression
+default items = []
+
 default been_to_hub = False
 default been_to_alleyway = False
 default been_to_house = False
 default been_to_house_entrance = False
 default been_to_detective_station = False
 
+default house_noticed_chicken = False
 default house_entrance_manual_unlock = False
 default house_noticed_car_keys_missing = False
 default detective_station_checked_id = False
@@ -55,7 +57,8 @@ label check_inventory:
 
     python:
         if len(items) > 0:
-            string_items = ", ".join(items)
+            string_items = ", ".join(items[:-1])
+            string_items += ", and " + items[-1]
         else:
             string_items = "absolutely nothing"
 
@@ -103,7 +106,6 @@ label hub_scene:
                     d "I... can't leave right now. I need to get inside my house somehow!"
                     jump .options
 
-                # Default at beginning of game
                 d "It's dark outside! With nowhere else to be right now, my priority should be to find a way home."
                 hide detective
                 
@@ -253,6 +255,9 @@ label home_scene:
             "Leave the house":
                 jump hub_scene
             
+            "Check for pet chicken":
+                show detective at left
+            
             "Check for the detective ID" if DETECTIVE_ID not in items:
                 show detective at left
                 if house_noticed_car_keys_missing:
@@ -339,17 +344,42 @@ label detective_station_scene:
                 hide detective
                 jump .options
             
-            "Check in with the guard" if not detective_station_checked_id:
+            "Talk with the guard":
                 show detective at left
                 show security at right
-                if DETECTIVE_ID in items:
-                    d "Here's my card."
-                    "The Detective extends their hand, containing the simple I.D. card. On the card is a barcode along the long side, and a picture."
-                    g "Thanks, and you're allowed in now."
-                    $ detective_station_checked_id = True
+                if detective_station_checked_id:
+                    d "I've already asked the guard to check my I.D., maybe they can help me further?"
+                    label .check_options:
+                        menu:
+                            "What should I do?"
+
+                            "Detective handbook" if DETECTIVE_HANDBOOK not in items:
+                                d "Do you know where my handbook could be? I seem to have misplaced it."
+                                s "Yes, it's with me, after "
+                                $ items.append(DETECTIVE_HANDBOOK)
+                                jump .check_options
+
+                            "Security Cameras" if CAMERA_FOOTAGE not in items:
+                                d "Do you think I could have access to the security cameras around here?"
+                                s "Sure, here's the material, and you can shift through it yourself."
+                                "The guard hands over a box of CDs with camera footage."
+                                $ items.append(CAMERA_FOOTAGE)
+                                jump .check_options
+
+                            "Stop talking":
+                                jump .stop_talk
+                    label .stop_talk:
+                        d "Well... it was good talking with you."
+                        s "It's just buisiness as usual."
                 else:
-                    d "I still don't have my I.D. card. Is there really no other way?"
-                    g "Nope. Sorry, I can't just allow any random person to come in, and you are no exception."
+                    if DETECTIVE_ID in items:
+                        d "Here's my card."
+                        "The Detective extends their hand, containing the simple I.D. card. On the card is a barcode along the long side, and a picture."
+                        g "Thanks, and you're allowed in now."
+                        $ detective_station_checked_id = True
+                    else:
+                        d "I still don't have my I.D. card. Is there really no other way?"
+                        g "Nope. Sorry, I can't just allow any random person to come in, and you are no exception."
                 hide detective
                 hide security
                 jump .options
@@ -382,7 +412,7 @@ label detective_station_scene:
                     s "Well, make sure to clean up the machine afterward. It messes up results if the area is unsanitary."
                     d "Yes, will do."
                     hide security
-                    d "That was close... why did I lie? I guess I've solved the mystery of who this belonged to"
+                    d "That was close... why did I lie? I guess I've solved the mystery of who this belonged to, but this just raises an entire new set of questions."
                 else:
                     d "I don't really have anything to analyse right now."
                 hide detective
