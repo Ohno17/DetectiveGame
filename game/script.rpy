@@ -43,6 +43,22 @@ transform right:
 label start:
     jump start_alley_scene
 
+label end:
+    d "Wait... why does it actually line up?"
+    pause 2.5
+    d "N-No... I've been investigating my own crime this whole time? And I don't even remember because of what they did to me?!"
+    show security
+    s "Put your hands behind your back. Don't resist."
+    d "This can't be happenning, no, No... I WouLD NEVER KiLl SAm JuniOr!! NOOooOOooo"
+    pause 0.5
+    hide security
+    hide detective
+
+    scene brickwall with fade
+    "The Detective was put in prison for the crimes they unknowingly committed."
+    "Thus, this story reaches its bittersweet end with that corner of the city returning to normal, and everybody else being blissfully unaware."
+    return
+
 label start_alley_scene:
 
     scene brickwall
@@ -68,11 +84,6 @@ label check_inventory:
     hide detective
 
     return
-
-label submit_case(name):
-    scene brickwall with fade
-    pause 2.0
-    return name == DETECTIVE_NAME
 
 label hub_scene:
 
@@ -103,9 +114,9 @@ label hub_scene:
                 if not submitted:
                     d "I guess I'm not confident in my choice right now."
                 else:
-                    call submit_case(submitted)
-                    if _return:
-                        jump game_end
+                    pause 2.0
+                    if submitted == DETECTIVE_NAME:
+                        jump end
                     else:
                         "Your choice was wrong."
                         d "I guess my choice was a little inaccurate."
@@ -277,10 +288,34 @@ label home_scene:
             "What should I do?"
 
             "Leave the house":
-                jump hub_scene
+                if house_noticed_chicken:
+                    jump hub_scene
+                else:
+                    show detective at left
+                    d "I need to check my pet chicken before I leave. It's important."
+                    hide detective
             
             "Check for pet chicken":
+                "The opressive smell of iron fills the Detective's senses."
                 show detective at left
+                if not house_noticed_chicken:
+                    d "I guess they threw the food in my fridge somewher e, too, because it smells... interesting in here."
+                    "There was once a Countryman who possessed the most wonderful Goose you can imagine, for every day when he visited the nest, the Goose had laid a beautiful, glittering, golden egg."
+                    d "Huh... usually my chicken would be screaming as soon as it sensed me coming up the stairs."
+                    "The Countryman took the eggs to market and soon began to get rich. But it was not long before he grew impatient with the Goose because she gave him only a single golden egg a day. He was not getting rich fast enough."
+                    d "Sam junior? Sam junior?!?"
+                    "Then one day, after he had finished counting his money, the idea came to him that he could get all the golden eggs at once by killing the Goose and cutting it open."
+                    d "There's... there's blood here too, under the door? Sam Junior are you OK?!"
+                    pause 1.0
+                    "But now, the chicken lays there, with not a single golden egg to be found."
+                    pause 1.0
+                    d "No. NO NO No no, no... SAM JUNIOR, HOW COULD THEY DO THIS TO YOU?!?!?"
+                    $ house_noticed_chicken = True
+                else:
+                    "The Detective sniffles once upon entering the room."
+                    d "Here's a picture of me and Sam junior. I named the chicken after myself, because I always saw it as my beautiful, bountiful child."
+                    "The detective holds up a picture of themselves jumping off a ledge, holding Sam Jr. like a glider."
+                hide detective
             
             "Check for the detective ID" if DETECTIVE_ID not in items:
                 show detective at left
@@ -343,7 +378,7 @@ label detective_station_scene:
         d "I feel like I haven't been here in a while..."
         d "Hope they still recongnize me."
         pause 0.5
-        "The Detective tries to enter the back rooms, but..."
+        "The Detective tries to enter the employee room, but..."
         show security at right
         s "Hey! You haven't checked your I.D. yet, and I can't have random people walking in!"
         d "Oh... sorry, but... don't you recongnize me? I'm the investigator at this station."
@@ -364,7 +399,7 @@ label detective_station_scene:
             "Look around":
                 show detective at left
                 d "Let's see here... there should be a blood analyzer machine around here."
-                d "There's also the security guard at the front desk."
+                d "There's also the security guard at the front desk. The guard has a name tag that says '[SECURITY_NAME]' and their outfit menaces with harsh contrast."
                 hide detective
                 jump .options
             
@@ -395,9 +430,21 @@ label detective_station_scene:
                                 jump .check_options
                             
                             "A CD player":
-                                if CAMERA_FOOTAGE in items:
-                                d ""
                                 s "There's no CD players at this station, if that's what you're asking."
+                                if CAMERA_FOOTAGE in items:
+                                    d "So... how will I see this footage you gave me?"
+                                    s "It's in your hands now."
+                                else:
+                                    s extend "Why are you asking?"
+                                    d "I don't know... maybe I wanted to watch a movie?"
+                                    if DETECTIVE_HANDBOOK in items:
+                                        s "Well, you better not slack off any further after those two months of 'rest'"
+                                jump .check_options
+                            
+                            "Guard's Name":
+                                s "It's right here on my badge, see? I'm [SECURITY_NAME]"
+                                d "I see, Thanks."
+                                s "You aren't trying to get all buddy-buddy with me, are you? Because it isn't happening."
 
                             "Stop talking":
                                 jump .stop_talk
