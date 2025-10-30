@@ -190,7 +190,7 @@ label hub_scene:
                 jump .options
             
             "Check items":
-                call check_inventory
+                call check_inventory from _call_check_inventory
                 jump .options
 
             "Explore alleyway":
@@ -253,7 +253,7 @@ label alleyway_scene:
                 jump alleyway_options
             
             "Check items":
-                call check_inventory
+                call check_inventory from _call_check_inventory_1
                 jump alleyway_options
 
 label home_entrance_scene:
@@ -308,7 +308,7 @@ label home_entrance_scene:
                     jump .options
             
             "Check items":
-                call check_inventory
+                call check_inventory from _call_check_inventory_2
                 jump .options
 
 label home_scene:
@@ -475,7 +475,7 @@ label home_scene:
                 jump .options
             
             "Check items":
-                call check_inventory
+                call check_inventory from _call_check_inventory_3
                 jump .options
 
 
@@ -549,7 +549,7 @@ label detective_station_scene:
                                     d "So... how will I see this footage you gave me?"
                                     s "It's in your hands now."
                                 else:
-                                    s extend "Why are you asking?"
+                                    s "Why are you asking?"
                                     d "I don't know... maybe I wanted to watch a movie?"
                                     if DETECTIVE_HANDBOOK in items:
                                         s "Well, you better not slack off any further after those two months of 'rest'"
@@ -617,5 +617,5 @@ label detective_station_scene:
                 jump .options
 
             "Check items":
-                call check_inventory
+                call check_inventory from _call_check_inventory_4
                 jump .options
