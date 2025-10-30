@@ -55,12 +55,29 @@ label end:
     if not waltz_started:
         play music leitwaltz
     s "Don't resist."
-    d "This can't be happenning, no, No... I WouLD NEVER KiLl SAm JuniOr!! NOOooOOooo"
+    d "This can't be happenning, no, No... NOOooOOooo"
     pause 0.5
+
+    scene house with fade
+    show detective at left
+    show security at right
+
+    s "Don't run! You're just making things harder for yourself!"
+    d "THIS CAn'T BE REAL!! IT'S ALLL A DREAMM!! it HAS tO BE!"
+    pause 1.0
+
+    scene chickendoor with fade
+    show detective at left
+    show security at right
+
+    d "I WouLD NEVER KiLl SAm JuniOr!! STOP ,STOp ,.. I'VE DONE noTHiNG WrONG!!"
+    s "I'm on your side here... we can get this all sorted out if you could just cooperate."
+    pause 1.0
+
     hide security
     hide detective
 
-    scene prison with fade # Prison scene
+    scene prision with fade # Prison scene
     show detective at left
     d "I know what I did now..."
     pause 0.5
@@ -136,16 +153,22 @@ label hub_scene:
                 else:
                     pause 2.0
                     if submitted == DETECTIVE_NAME:
-                        jump end
+                        if detective_station_analyzed_blood or waltz_started:
+                            jump end
+                        else:
+                            d "Me? That's funny. And plus, I would need some evidence to create a case for anybody, like a sample or untampered footage."
                     else:
                         "Your choice was wrong."
-                        d "I guess my choice was a little inaccurate."
+                        if submitted == SECURITY_NAME:
+                            d "That security person seemed suspicious, but it looks like we just got off on the wrong foot."
+                        else:
+                            d "I guess my choice was a little inaccurate."
                 hide detective
                 jump .options
 
             "Look around":
                 show detective at left
-                d "I see some buildings and a few closed shops. Nothing seems out of the ordinary. There's the alleyway to the left, the detective station ahead, and my house to the right."
+                d "I see some buildings and a few closed shops. Nothing seems out of the ordinary. There's the alleyway, the detective station ahead, and my house, all to the left ahead of me."
                 hide detective
                 jump .options
             
@@ -290,7 +313,7 @@ label home_entrance_scene:
 
 label home_scene:
 
-    scene home with fade # Home
+    scene house with fade # Home
 
     if not been_to_house:
 
@@ -321,35 +344,35 @@ label home_scene:
                 show detective at left
                 if not house_noticed_chicken:
                     d "I guess they threw around the food in my fridge somewhere too, because it smells... interesting in here."
-                    scene brickwall # Chicken dream
+                    scene chickendream # Chicken dream
                     hide detective
                     
                     "There was once a Countryman who possessed the most wonderful Goose you can imagine, for every day when he visited the nest, the Goose had laid a beautiful, glittering, golden egg."
-                    scene home # Home
+                    scene house # Home
                     show detective at left
                     
-                    d "Huh... usually my chicken would be screaming as soon as it sensed me coming up the stairs."
-                    scene brickwall # Chicken dream
+                    d "Huh... usually my chicken would be screaming as soon as it sensed me coming inside."
+                    scene chickendream # Chicken dream
                     hide detective
                     
                     "The Countryman took the eggs to market and soon began to get rich. But it was not long before he grew impatient with the Goose because she gave him only a single golden egg a day. He was not getting rich fast enough."
-                    scene home # Home
+                    scene house # Home
                     show detective at left
-                    d "Sam junior? Sam junior?!?"
-                    scene brickwall # Chicken dream
+                    d "Sam junior? Sam juniorrrrrr?"
+                    scene chickendream # Chicken dream
                     hide detective
                     
                     "Then one day, after he had finished counting his money, the idea came to him that he could get all the golden eggs at once by killing the Goose and cutting it open."
                     show detective at left
                     d "There's... there's blood here too, under the door? Sam Junior are you OK?!"
-                    scene brickwall # Chicken door
+                    scene chickendoor # Chicken door
                     show detective at left
                     pause 1.0
                     "But now, the chicken lays there, with not a single golden egg to be found."
                     pause 1.0
                     d "No. NO NO No no, no... SAM JUNIOR, HOW COULD THEY DO THIS TO YOU?!?!?"
                     $ house_noticed_chicken = True
-                    scene home with fade # Home
+                    scene house with fade # Home
                 else:
                     "The Detective sniffles once upon entering the room."
                     d "Here's a picture of me and Sam junior. I named the chicken after myself, because I always saw it as my beautiful, bountiful child."
@@ -400,11 +423,13 @@ label home_scene:
                                 "As the clip continues, something mysterious happens."
                                 d "Huh?! Is that ME in walking into the alleyway?"
                                 "The Detective watches themselves stumble into the alleway, then watches four people dressed in all black assemble behind them."
-                                stop music
+                                if not waltz_started:
+                                    stop music
                                 d "What... what's happening..?"
                                 "The camera gets covered up by a piece of paper for the rest of the clip, but it's clear from the sound that the Detective is getting beat up."
-                                play music leitwaltz
-                                $ waltz_started = True
+                                if not waltz_started:
+                                    play music leitwaltz
+                                    $ waltz_started = True
                                 d "What... the guard must not have noticed with their sound off, but... Did I just watch myself getting attacked in the alleyway, JUST YESTERDAY, that I have absolutely NO MEMORY of?"
                                 d "I don't understand..."
                                 jump .check_options
@@ -456,7 +481,7 @@ label home_scene:
 
 label detective_station_scene:
 
-    scene brickwall with fade # Detective station
+    scene station with fade # Detective station
 
     if not been_to_detective_station:
 
